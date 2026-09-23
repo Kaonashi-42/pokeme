@@ -14,6 +14,7 @@ public struct Meeting: Equatable, Identifiable, Sendable {
     public let attendeeCount: Int
     public let isAllDay: Bool
     public let isDeclined: Bool
+    public let isCanceled: Bool
 
     public init(
         id: String,
@@ -26,7 +27,8 @@ public struct Meeting: Equatable, Identifiable, Sendable {
         calendarTitle: String? = nil,
         attendeeCount: Int = 0,
         isAllDay: Bool = false,
-        isDeclined: Bool = false
+        isDeclined: Bool = false,
+        isCanceled: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -39,6 +41,7 @@ public struct Meeting: Equatable, Identifiable, Sendable {
         self.attendeeCount = attendeeCount
         self.isAllDay = isAllDay
         self.isDeclined = isDeclined
+        self.isCanceled = isCanceled
     }
 
     /// The location worth showing, or nil when it is empty or just the video link.
@@ -47,10 +50,10 @@ public struct Meeting: Equatable, Identifiable, Sendable {
         return location
     }
 
-    /// Meetings worth poking about (timed and not declined), soonest first.
+    /// Meetings worth poking about (timed, not declined, not canceled), soonest first.
     public static func alertable(_ meetings: [Meeting]) -> [Meeting] {
         meetings
-            .filter { !$0.isAllDay && !$0.isDeclined }
+            .filter { !$0.isAllDay && !$0.isDeclined && !$0.isCanceled }
             .sorted { $0.start < $1.start }
     }
 }

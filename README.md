@@ -15,8 +15,8 @@ It reads the macOS Calendar database, so any account added to Calendar.app (iClo
 - Menu bar shows the next meeting (`Standup in 12m`) and lists the rest of today's meetings.
 - Configurable timing: at start, or 1, 2 or 5 minutes before.
 - Pick which calendars to watch (new calendars are watched by default).
-- Skips all-day events and meetings you declined. Back-to-back meetings are shown one after the other.
-- Catches meetings that started up to a minute ago, e.g. right after the Mac wakes up.
+- Skips all-day, declined and canceled meetings. Back-to-back meetings are shown one after the other.
+- Catches meetings that started up to 5 minutes ago, e.g. right after the Mac wakes up.
 - Launch at login.
 
 ## Requirements

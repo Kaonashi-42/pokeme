@@ -4,12 +4,13 @@ import Testing
 @testable import PokeMeCore
 
 struct MeetingTests {
-    @Test func alertableDropsAllDayAndDeclinedAndSortsByStart() {
+    @Test func alertableDropsAllDayDeclinedAndCanceledAndSortsByStart() {
         let meetings: [Meeting] = [
             .fixture(id: "late", startsIn: 600),
             .fixture(id: "allDay", startsIn: 0, isAllDay: true),
             .fixture(id: "early", startsIn: 60),
             .fixture(id: "declined", startsIn: 30, isDeclined: true),
+            .fixture(id: "canceled", startsIn: 45, isCanceled: true),
         ]
         #expect(Meeting.alertable(meetings).map(\.id) == ["early", "late"])
     }

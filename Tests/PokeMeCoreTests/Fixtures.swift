@@ -13,7 +13,8 @@ extension Meeting {
         duration: TimeInterval = 1_800,
         location: String? = nil,
         isAllDay: Bool = false,
-        isDeclined: Bool = false
+        isDeclined: Bool = false,
+        isCanceled: Bool = false
     ) -> Meeting {
         Meeting(
             id: id,
@@ -22,7 +23,8 @@ extension Meeting {
             end: t0.addingTimeInterval(offset + duration),
             location: location,
             isAllDay: isAllDay,
-            isDeclined: isDeclined
+            isDeclined: isDeclined,
+            isCanceled: isCanceled
         )
     }
 }

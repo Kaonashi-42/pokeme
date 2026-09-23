@@ -6,11 +6,13 @@ import SwiftUI
 @MainActor
 final class OverlayController {
     private var windows: [NSWindow] = []
+    /// Called after the user closes the overlay (join, snooze or dismiss).
+    var onDismiss: (() -> Void)?
 
     var isVisible: Bool { !windows.isEmpty }
 
     func present(_ meeting: Meeting, color: NSColor, onSnooze: @escaping () -> Void) {
-        dismiss()
+        closeWindows()
         NSSound(named: "Glass")?.play()
         NSApp.activate(ignoringOtherApps: true)
         let view = OverlayView(
@@ -21,8 +23,8 @@ final class OverlayController {
                 self?.dismiss()
             },
             onSnooze: { [weak self] in
-                self?.dismiss()
                 onSnooze()
+                self?.dismiss()
             },
             onDismiss: { [weak self] in self?.dismiss() }
         )
@@ -32,6 +34,14 @@ final class OverlayController {
     }
 
     func dismiss() {
+        guard isVisible else { return }
+        closeWindows()
+        // Give focus back to the app the user was in before the poke.
+        NSApp.hide(nil)
+        onDismiss?()
+    }
+
+    private func closeWindows() {
         for window in windows { window.orderOut(nil) }
         windows = []
     }

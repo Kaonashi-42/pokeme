@@ -28,6 +28,8 @@ struct MeetingLinkTests {
         "Room 4, no link",
         "https://example.com/zoom.us",
         "https://notzoom.us/j/1",
+        "ftp://zoom.us/j/1",
+        "file://zoom.us/j/1",
         "",
     ])
     func ignoresNonVideoText(text: String) {

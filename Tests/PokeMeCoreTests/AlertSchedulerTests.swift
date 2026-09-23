@@ -40,9 +40,13 @@ struct AlertSchedulerTests {
         #expect(scheduler.nextAlert(in: [.fixture(startsIn: -60)], at: t0) == nil)
     }
 
-    @Test func skipsAllDayAndDeclinedMeetings() {
+    @Test func skipsAllDayDeclinedAndCanceledMeetings() {
         var scheduler = AlertScheduler(leadTime: 60)
-        let meetings: [Meeting] = [.fixture(startsIn: 10, isAllDay: true), .fixture(startsIn: 10, isDeclined: true)]
+        let meetings: [Meeting] = [
+            .fixture(startsIn: 10, isAllDay: true),
+            .fixture(startsIn: 10, isDeclined: true),
+            .fixture(startsIn: 10, isCanceled: true),
+        ]
         #expect(scheduler.nextAlert(in: meetings, at: t0) == nil)
     }
 

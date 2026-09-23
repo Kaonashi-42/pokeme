@@ -16,7 +16,7 @@ final class CalendarService {
 
     /// Event calendars grouped by account ("iCloud", "Google"…), both sorted by name.
     var calendarsBySource: [(source: String, calendars: [EKCalendar])] {
-        Dictionary(grouping: store.calendars(for: .event)) { $0.source.title }
+        Dictionary(grouping: store.calendars(for: .event)) { $0.source?.title ?? "Other" }
             .map { (source: $0.key, calendars: $0.value.sorted { $0.title < $1.title }) }
             .sorted { $0.source < $1.source }
     }
@@ -66,7 +66,8 @@ extension Meeting {
             calendarTitle: event.calendar?.title,
             attendeeCount: event.attendees?.count ?? 0,
             isAllDay: event.isAllDay,
-            isDeclined: event.attendees?.first { $0.isCurrentUser }?.participantStatus == .declined
+            isDeclined: event.attendees?.first { $0.isCurrentUser }?.participantStatus == .declined,
+            isCanceled: event.status == .canceled
         )
     }
 }

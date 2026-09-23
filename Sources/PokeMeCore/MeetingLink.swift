@@ -18,14 +18,17 @@ public enum MeetingLink {
         types: NSTextCheckingResult.CheckingType.link.rawValue
     )
 
-    /// The first video-call link found across `texts` (typically the event URL, location and notes).
+    /// Only web links are opened: a calendar invite is untrusted input and could carry other schemes.
+    static let allowedSchemes: Set<String> = ["https", "http"]
+
+    /// The first web link to a known video service found across `texts` (typically the event URL, location and notes).
     public static func find(in texts: [String?]) -> URL? {
         guard let detector else { return nil }
         let text = texts.compactMap { $0 }.joined(separator: "\n")
         return detector.matches(in: text, range: NSRange(text.startIndex..., in: text))
             .lazy
             .compactMap(\.url)
-            .first { serviceName(for: $0) != nil }
+            .first { allowedSchemes.contains($0.scheme?.lowercased() ?? "") && serviceName(for: $0) != nil }
     }
 
     /// Human-readable service name ("Zoom", "Google Meet"…) or nil if the link is not a known video service.
