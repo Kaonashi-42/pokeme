@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+PokeMe.app/
+.DS_Store
+PokeMe-*.zip
+PokeMe-*.zip.sha256
