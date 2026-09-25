@@ -34,14 +34,14 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             systemSymbolName: "hand.point.right.fill",
             accessibilityDescription: "PokeMe"
         )
-        statusItem.button?.imagePosition = .imageLeading
         let menu = NSMenu()
         menu.delegate = self
         statusItem.menu = menu
     }
 
-    func setTitle(_ title: String) {
-        statusItem.button?.title = title.isEmpty ? "" : " " + title
+    /// The menu bar shows only the icon to save space; the next meeting is available on hover.
+    func setNextMeeting(_ description: String) {
+        statusItem.button?.toolTip = description.isEmpty ? "PokeMe: no more meetings today" : "Next: \(description)"
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {

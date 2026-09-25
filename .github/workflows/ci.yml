@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-    branches: [main]
   pull_request:
 
 permissions:
@@ -25,5 +24,3 @@ jobs:
         run: make lint
       - name: Test
         run: make test
-      - name: Build app bundle
-        run: make app

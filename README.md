@@ -12,7 +12,7 @@ It reads the macOS Calendar database, so any account added to Calendar.app (iClo
 - **One-click join** for Zoom, Google Meet, Teams, Webex, Whereby, FaceTime and Chime links found in the event URL,
   location or notes. <kbd>Return</kbd> joins, <kbd>Esc</kbd> dismisses.
 - **Snooze** for one minute.
-- Menu bar shows the next meeting (`Standup in 12m`) and lists the rest of today's meetings.
+- Compact menu bar icon: hover it for the next meeting (`Standup in 12m`), click it for the rest of today's meetings.
 - Configurable timing: at start, or 1, 2 or 5 minutes before.
 - Pick which calendars to watch (new calendars are watched by default).
 - Skips all-day, declined and canceled meetings. Back-to-back meetings are shown one after the other.
@@ -55,19 +55,23 @@ Linting uses `swift format`, which ships with the Swift toolchain, so there is n
 
 GitHub Actions runs on macOS:
 
-- [`ci.yml`](.github/workflows/ci.yml): on every push to `main` and every pull request, runs `make lint`,
-  `make test` and `make app`.
-- [`release.yml`](.github/workflows/release.yml): on a `v*` tag, lints, tests, packages the app and publishes a GitHub
-  release with the zip and its checksum attached, and notes generated from the commits.
+- [`ci.yml`](.github/workflows/ci.yml): on every push and pull request, runs `make lint` and `make test`.
+- [`release.yml`](.github/workflows/release.yml): started manually, see below.
 
 ### Releasing
 
-```sh
-git tag v1.2.0
-git push origin v1.2.0
-```
+In GitHub, open **Actions › Release › Run workflow** on `main` and pick which part of the version to bump
+(`patch`, `minor` or `major`). The workflow:
 
-The version shown in the app comes from the tag (without the `v`).
+1. lints and tests,
+2. computes the next [semver](https://semver.org) tag from the latest `vX.Y.Z` tag (the first release starts from
+   `v0.0.0`),
+3. builds the universal (Apple silicon + Intel) app with that version and zips it with its SHA-256 checksum,
+4. signs a build provenance attestation,
+5. creates the tag and the GitHub release, with the short description of every commit since the previous tag as
+   release notes.
+
+It refuses to release when there are no new commits since the last tag.
 
 Releases are ad-hoc signed, not notarized, so macOS blocks the first launch of a downloaded copy. After unzipping and
 moving PokeMe to Applications, either open it once and click **Open Anyway** in System Settings › Privacy & Security,

@@ -80,7 +80,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 present(meeting)
             }
         }
-        statusMenu?.setTitle(Format.statusTitle(for: meetings.first { $0.start > now }, now: now))
+        statusMenu?.setNextMeeting(
+            Format.statusTitle(for: meetings.first { $0.start > now }, now: now, maxTitleLength: 60))
     }
 
     private func present(_ meeting: Meeting) {
