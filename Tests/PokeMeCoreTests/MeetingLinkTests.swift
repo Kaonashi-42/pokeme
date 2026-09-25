@@ -36,6 +36,11 @@ struct MeetingLinkTests {
         #expect(MeetingLink.find(in: [text]) == nil)
     }
 
+    @Test func ignoresLinksBeyondTheScanLimit() {
+        let padding = String(repeating: "x", count: MeetingLink.maxScannedLength)
+        #expect(MeetingLink.find(in: [padding, "https://zoom.us/j/1"]) == nil)
+    }
+
     @Test func returnsNilWithNoFields() {
         #expect(MeetingLink.find(in: []) == nil)
         #expect(MeetingLink.find(in: [nil, nil]) == nil)

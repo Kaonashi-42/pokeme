@@ -23,7 +23,7 @@ app: build
 		-c "Set :CFBundleVersion $(VERSION)" \
 		$(APP)/Contents/Info.plist
 	cp "$$($(SWIFT_BUILD) --show-bin-path)/PokeMe" $(APP)/Contents/MacOS/PokeMe
-	codesign --force --sign - $(APP)
+	codesign --force --options runtime --entitlements PokeMe.entitlements --sign - $(APP)
 
 # Zip the bundle for distribution. ditto keeps the code signature and extended attributes intact.
 package: app

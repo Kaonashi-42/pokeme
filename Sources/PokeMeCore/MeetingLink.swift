@@ -18,13 +18,16 @@ public enum MeetingLink {
         types: NSTextCheckingResult.CheckingType.link.rawValue
     )
 
+    /// Event notes come from whoever sent the invite: scanning is capped so a huge note can't burn CPU on every poll.
+    static let maxScannedLength = 50_000
+
     /// Only web links are opened: a calendar invite is untrusted input and could carry other schemes.
     static let allowedSchemes: Set<String> = ["https", "http"]
 
     /// The first web link to a known video service found across `texts` (typically the event URL, location and notes).
     public static func find(in texts: [String?]) -> URL? {
         guard let detector else { return nil }
-        let text = texts.compactMap { $0 }.joined(separator: "\n")
+        let text = String(texts.compactMap { $0 }.joined(separator: "\n").prefix(maxScannedLength))
         return detector.matches(in: text, range: NSRange(text.startIndex..., in: text))
             .lazy
             .compactMap(\.url)

@@ -9,6 +9,11 @@ struct OverlayView: View {
     let onSnooze: () -> Void
     let onDismiss: () -> Void
 
+    /// Buttons and shortcuts stay inactive for a moment after the overlay appears, so a Return or click meant for the
+    /// app the user was typing in doesn't join a call by accident.
+    private static let armingDelay: Duration = .milliseconds(800)
+    @State private var isArmed = false
+
     var body: some View {
         ZStack {
             Color.black.opacity(0.9)
@@ -32,7 +37,9 @@ struct OverlayView: View {
                     .font(.system(size: 28, weight: .medium, design: .rounded))
                     .foregroundStyle(.secondary)
                 details
-                actions.padding(.top, 20)
+                actions
+                    .padding(.top, 20)
+                    .allowsHitTesting(isArmed)
                 Text(meeting.joinURL == nil ? "esc to dismiss" : "return to join  ·  esc to dismiss")
                     .font(.system(size: 13))
                     .foregroundStyle(.tertiary)
@@ -43,6 +50,10 @@ struct OverlayView: View {
         .foregroundStyle(.white)
         .environment(\.colorScheme, .dark)
         .ignoresSafeArea()
+        .task {
+            try? await Task.sleep(for: Self.armingDelay)
+            isArmed = true
+        }
     }
 
     private func calendarChip(_ title: String) -> some View {
@@ -79,13 +90,13 @@ struct OverlayView: View {
                     Label("Join \(MeetingLink.serviceName(for: url) ?? "call")", systemImage: "video.fill")
                 }
                 .buttonStyle(PillButtonStyle(isPrimary: true))
-                .keyboardShortcut(.defaultAction)
+                .keyboardShortcut(isArmed ? .defaultAction : nil)
             }
             Button("Snooze 1 min", action: onSnooze)
                 .buttonStyle(PillButtonStyle())
             Button("Dismiss", action: onDismiss)
                 .buttonStyle(PillButtonStyle())
-                .keyboardShortcut(.cancelAction)
+                .keyboardShortcut(isArmed ? .cancelAction : nil)
         }
     }
 }

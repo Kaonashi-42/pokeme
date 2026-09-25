@@ -99,6 +99,7 @@ Sources/
     OverlayView.swift         The SwiftUI overlay
 Tests/PokeMeCoreTests/      Swift Testing suites for PokeMeCore
 Info.plist                  Bundle metadata and calendar usage description
+PokeMe.entitlements         App Sandbox with calendar access only
 .github/workflows/          CI and release pipelines
 ```
 
@@ -110,6 +111,24 @@ platform glue.
 Every 10 seconds (and whenever the calendar changes or the Mac wakes up) the app fetches today's events from the enabled
 calendars, maps them to `Meeting` values and asks `AlertScheduler` whether one is due. If so and no overlay is showing,
 it opens a borderless `.screenSaver`-level window on each screen.
+
+## Security
+
+Calendar invites can be sent by anyone, so their title, location and notes are treated as untrusted input:
+
+- The app runs in the **App Sandbox** with the **hardened runtime**, and its only entitlement is calendar access.
+- Only `https`/`http` links to known video services are offered as **Join**; anything else is ignored.
+- The overlay's buttons and <kbd>Return</kbd>/<kbd>Esc</kbd> stay inactive for 0.8 s after it appears, so a keystroke
+  or click meant for another app can't join a call by accident.
+- Link detection scans at most 50,000 characters of event text.
+- Event titles are never logged.
+
+Releases carry a signed build provenance attestation. Check that a download was built by this repository's workflow
+with:
+
+```sh
+gh attestation verify PokeMe-1.2.0.zip --repo Kaonashi-42/pokeme
+```
 
 ## Troubleshooting
 
