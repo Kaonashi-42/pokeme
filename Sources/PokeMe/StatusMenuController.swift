@@ -172,7 +172,7 @@ private final class ActionMenuItem: NSMenuItem {
 
 extension Meeting {
     /// A fake meeting starting in a minute, for "Preview Overlay".
-    fileprivate static var preview: Meeting {
+    static var preview: Meeting {
         Meeting(
             id: "preview-\(UUID().uuidString)",
             title: "Weekly design review",

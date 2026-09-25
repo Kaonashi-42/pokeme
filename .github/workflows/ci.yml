@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches-ignore: [badges]
   pull_request:
 
 permissions:
@@ -22,5 +23,33 @@ jobs:
         run: swift --version
       - name: Lint
         run: make lint
-      - name: Test
-        run: make test
+      - name: Test with coverage
+        run: make coverage BADGE=coverage.json
+      - name: Keep coverage badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: coverage-badge
+          path: coverage.json
+
+  # The README coverage badge reads coverage.json from the orphan `badges` branch through shields.io.
+  coverage-badge:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: coverage-badge
+      - name: Publish to the badges branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git init --quiet --initial-branch badges
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add coverage.json
+          git commit --quiet --message "Coverage badge for $GITHUB_SHA"
+          git push --force --quiet "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" badges

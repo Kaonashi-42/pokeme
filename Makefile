@@ -6,7 +6,7 @@ ZIP := PokeMe-$(VERSION).zip
 # Universal binary so the release runs on both Apple silicon and Intel Macs.
 SWIFT_BUILD := swift build -c release --arch arm64 --arch x86_64
 
-.PHONY: all build app icon package test lint format install clean
+.PHONY: all build app icon screenshot package test coverage lint format install clean
 
 all: lint test app
 
@@ -32,6 +32,11 @@ icon:
 	swift scripts/make-icon.swift .build/AppIcon.iconset
 	mkdir -p Resources
 	iconutil --convert icns --output Resources/AppIcon.icns .build/AppIcon.iconset
+	cp .build/AppIcon.iconset/icon_128x128@2x.png docs/icon.png
+
+# Render the overlay with the sample meeting for the README. Uses the unsandboxed debug build so it can write to docs/.
+screenshot:
+	swift run PokeMe --render-preview docs/overlay.png
 
 # Zip the bundle for distribution. ditto keeps the code signature and extended attributes intact.
 package: app
@@ -41,6 +46,11 @@ package: app
 
 test:
 	swift test
+
+# Tests plus line coverage of PokeMeCore (the app target is thin platform glue with no unit tests).
+coverage:
+	swift test --enable-code-coverage
+	python3 scripts/coverage.py "$$(swift test --show-codecov-path)" Sources/PokeMeCore $(if $(BADGE),--badge $(BADGE))
 
 lint:
 	swift format lint --strict --recursive --parallel $(LINT_PATHS)
