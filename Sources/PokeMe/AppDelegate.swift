@@ -69,6 +69,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func tick() {
+        calendar.refreshRemoteSources()
         let now = Date.now
         let meetings = upcomingMeetings(at: now)
         scheduler.leadTime = TimeInterval(settings.leadMinutes * 60)

@@ -69,6 +69,9 @@ Anyone can send a calendar invite, so event content is treated as untrusted:
 - Only `https` links to known video services can be joined.
 - The overlay ignores clicks and keys for 0.8 s after it appears, so typing in another app can't join a call.
 
+CI runs CodeQL on the Swift code and [zizmor](https://docs.zizmor.sh) on the workflows for every pull request, push to
+`main` and weekly; Dependabot keeps the pinned actions up to date.
+
 Releases include a build provenance attestation:
 `gh attestation verify PokeMe-<version>.zip --repo Kaonashi-42/pokeme`.
 

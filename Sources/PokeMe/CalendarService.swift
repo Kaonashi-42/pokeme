@@ -38,6 +38,12 @@ final class CalendarService {
         }
     }
 
+    /// Asks EventKit to pull from remote accounts. Without it the local cache only syncs while Calendar.app runs.
+    /// Throttled by EventKit; new data arrives through `EKEventStoreChanged`.
+    func refreshRemoteSources() {
+        store.refreshSourcesIfNecessary()
+    }
+
     func meetings(from start: Date, to end: Date, excluding disabledIDs: Set<String>) -> [Meeting] {
         guard isAuthorized else { return [] }
         let calendars = store.calendars(for: .event).filter { !disabledIDs.contains($0.calendarIdentifier) }
